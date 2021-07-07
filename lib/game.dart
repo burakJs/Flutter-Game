@@ -16,7 +16,8 @@ class GameView extends StatefulWidget {
 class _GameViewState extends State<GameView> {
   var point = 0;
   List<Enemy> enemyArray = [];
-  var TIME = 100;
+
+  var TIME = 1000 ~/ 30;
   late Timer timer;
 
   @override
@@ -26,33 +27,32 @@ class _GameViewState extends State<GameView> {
   }
 
   void startGame() {
+    print('ZAMAN : $TIME');
     timer = Timer.periodic(Duration(milliseconds: TIME), (timer) => gameUpdate(timer.tick));
   }
 
   void gameUpdate(int time) {
-    if (time % (TIME / 5) == 0) {
+    if (time % 30 == 0) {
       var enemy = generateEnemy();
       enemyArray.add(enemy);
     }
-    if (time % 100 == 0 && TIME > 50) {
-      TIME -= 10;
-      print(TIME);
+    if (time % 100 == 0 && TIME > 15) {
+      TIME -= 5;
       timer.cancel();
       startGame();
     }
     enemyArray.map((e) => e.update());
     for (var enemy in enemyArray) {
-      if (enemy.isDied) {
-        timer.cancel();
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => GameOverView(
-                      point: point,
-                    )),
-            (route) => false);
-        ;
-      }
+      // if (enemy.isDied) {
+      //   timer.cancel();
+      //   Navigator.pushAndRemoveUntil(
+      //       context,
+      //       MaterialPageRoute(
+      //           builder: (context) => GameOverView(
+      //                 point: point,
+      //               )),
+      //       (route) => false);
+      // }
       enemy.update();
     }
     setState(() {});
@@ -65,7 +65,6 @@ class _GameViewState extends State<GameView> {
   }
 
   void checkButton(int checkNum) {
-    print(enemyArray.length);
     if (enemyArray.isEmpty) {
       return;
     }
